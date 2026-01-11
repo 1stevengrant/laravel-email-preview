@@ -1,0 +1,34 @@
+{
+    "name": "ghijk/laravel-email-preview",
+    "description": "A Laravel package for capturing and previewing emails in a web UI for staging/testing environments",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Steven Grant",
+            "email": "steven@ghijk.nz"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/database": "^10.0|^11.0|^12.0",
+        "illuminate/mail": "^10.0|^11.0|^12.0",
+        "symfony/mailer": "^6.0|^7.0",
+        "symfony/mime": "^6.0|^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ghijk\\EmailPreview\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ghijk\\EmailPreview\\EmailPreviewServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
