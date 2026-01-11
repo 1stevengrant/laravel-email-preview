@@ -2,12 +2,12 @@
 
 namespace Ghijk\EmailPreview\Http\Controllers;
 
-use Inertia\Inertia;
-use Inertia\Response;
+use Ghijk\EmailPreview\Models\CapturedEmail;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Illuminate\Http\RedirectResponse;
-use Ghijk\EmailPreview\Models\CapturedEmail;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class CapturedEmailsController extends Controller
 {
@@ -49,7 +49,7 @@ class CapturedEmailsController extends Controller
         $email = CapturedEmail::where('uuid', $uuid)->firstOrFail();
         $email->delete();
 
-        $routeName = config('email-preview.routes.name') . '.index';
+        $routeName = config('email-preview.routes.name').'.index';
 
         return to_route($routeName)->with('success', 'Email deleted successfully.');
     }
@@ -58,7 +58,7 @@ class CapturedEmailsController extends Controller
     {
         CapturedEmail::truncate();
 
-        $routeName = config('email-preview.routes.name') . '.index';
+        $routeName = config('email-preview.routes.name').'.index';
 
         return to_route($routeName)->with('success', 'All emails cleared successfully.');
     }

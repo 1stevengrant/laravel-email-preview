@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Ghijk\EmailPreview\Http\Controllers\CapturedEmailsController;
+use Illuminate\Support\Facades\Route;
 
 $config = config('email-preview.routes');
 
@@ -11,7 +11,7 @@ if (! $config['enabled']) {
 
 Route::prefix($config['prefix'])
     ->middleware($config['middleware'])
-    ->name($config['name'] . '.')
+    ->name($config['name'].'.')
     ->group(function () {
         Route::get('/', [CapturedEmailsController::class, 'index'])->name('index');
         Route::get('/{uuid}', [CapturedEmailsController::class, 'show'])->name('show');

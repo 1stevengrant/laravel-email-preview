@@ -1,56 +1,44 @@
 <?php
 
-namespace Ghijk\EmailPreview\Tests\Feature;
-
 use Ghijk\EmailPreview\Models\CapturedEmail;
-use Ghijk\EmailPreview\Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
 
-class DatabaseTransportTest extends TestCase
-{
-    use RefreshDatabase;
+it('captures emails to database', function (): void {
+    Mail::raw('Test email content', function ($message): void {
+        $message->to('recipient@example.com')
+            ->subject('Test Email');
+    });
 
-    public function test_emails_are_captured_to_database(): void
-    {
-        Mail::raw('Test email content', function ($message) {
-            $message->to('recipient@example.com')
-                ->subject('Test Email');
-        });
+    $this->assertDatabaseHas('captured_emails', [
+        'subject' => 'Test Email',
+    ]);
 
-        $this->assertDatabaseHas('captured_emails', [
-            'subject' => 'Test Email',
-        ]);
+    $email = CapturedEmail::first();
+    expect(json_encode($email->to))->toContain('recipient@example.com');
+});
 
-        $email = CapturedEmail::first();
-        $this->assertStringContainsString('recipient@example.com', json_encode($email->to));
-    }
+it('captures html emails', function (): void {
+    Mail::html('<h1>Hello World</h1>', function ($message): void {
+        $message->to('test@example.com')
+            ->subject('HTML Email');
+    });
 
-    public function test_html_emails_are_captured(): void
-    {
-        Mail::html('<h1>Hello World</h1>', function ($message) {
-            $message->to('test@example.com')
-                ->subject('HTML Email');
-        });
+    $email = CapturedEmail::first();
 
-        $email = CapturedEmail::first();
+    expect($email->subject)->toBe('HTML Email');
+    expect($email->html_body)->toContain('Hello World');
+});
 
-        $this->assertEquals('HTML Email', $email->subject);
-        $this->assertStringContainsString('Hello World', $email->html_body);
-    }
+it('captures cc and bcc', function (): void {
+    Mail::raw('Test', function ($message): void {
+        $message->to('to@example.com')
+            ->cc('cc@example.com')
+            ->bcc('bcc@example.com')
+            ->subject('CC BCC Test');
+    });
 
-    public function test_cc_and_bcc_are_captured(): void
-    {
-        Mail::raw('Test', function ($message) {
-            $message->to('to@example.com')
-                ->cc('cc@example.com')
-                ->bcc('bcc@example.com')
-                ->subject('CC BCC Test');
-        });
+    $email = CapturedEmail::first();
 
-        $email = CapturedEmail::first();
-
-        $this->assertNotNull($email->cc);
-        $this->assertNotNull($email->bcc);
-    }
-}
+    expect($email->cc)->not->toBeNull();
+    expect($email->bcc)->not->toBeNull();
+});

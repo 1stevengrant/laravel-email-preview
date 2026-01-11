@@ -2,14 +2,14 @@
 
 namespace Ghijk\EmailPreview\Mail\Transport;
 
-use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Address;
-use Symfony\Component\Mailer\Envelope;
-use Symfony\Component\Mime\RawMessage;
-use Symfony\Component\Mailer\SentMessage;
 use Ghijk\EmailPreview\Models\CapturedEmail;
-use Symfony\Component\Mime\MessageConverter;
+use Symfony\Component\Mailer\Envelope;
+use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mailer\Transport\TransportInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
+use Symfony\Component\Mime\MessageConverter;
+use Symfony\Component\Mime\RawMessage;
 
 class DatabaseTransport implements TransportInterface
 {
@@ -42,9 +42,7 @@ class DatabaseTransport implements TransportInterface
 
     protected function extractAddresses(array $addresses): array
     {
-        return array_map(function (Address $address) {
-            return $address->getAddress();
-        }, $addresses);
+        return array_map(fn (Address $address): string => $address->getAddress(), $addresses);
     }
 
     protected function extractHeaders(Email $email): array
@@ -65,7 +63,7 @@ class DatabaseTransport implements TransportInterface
         foreach ($email->getAttachments() as $attachment) {
             $attachments[] = [
                 'name' => $attachment->getName(),
-                'content_type' => $attachment->getMediaType() . '/' . $attachment->getMediaSubtype(),
+                'content_type' => $attachment->getMediaType().'/'.$attachment->getMediaSubtype(),
                 'size' => mb_strlen($attachment->getBody()),
                 'body' => base64_encode($attachment->getBody()),
             ];

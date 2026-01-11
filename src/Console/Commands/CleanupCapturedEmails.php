@@ -2,8 +2,8 @@
 
 namespace Ghijk\EmailPreview\Console\Commands;
 
-use Illuminate\Console\Command;
 use Ghijk\EmailPreview\Models\CapturedEmail;
+use Illuminate\Console\Command;
 
 class CleanupCapturedEmails extends Command
 {

@@ -31,10 +31,11 @@
         "orchestra/testbench": "^8.0|^9.0|^10.0",
         "phpunit/phpunit": "^10.0|^11.0",
         "laravel/pint": "^1.0",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.0",
+        "pestphp/pest": "^3.8"
     },
     "scripts": {
-        "test": "vendor/bin/phpunit",
+        "test": "vendor/bin/pest",
         "lint": "vendor/bin/pint",
         "lint-check": "vendor/bin/pint --test",
         "rector": "vendor/bin/rector",
@@ -48,5 +49,10 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
 }

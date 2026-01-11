@@ -1,79 +1,66 @@
 <?php
 
-namespace Ghijk\EmailPreview\Tests\Unit;
-
 use Ghijk\EmailPreview\Models\CapturedEmail;
-use Ghijk\EmailPreview\Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class CapturedEmailTest extends TestCase
-{
-    use RefreshDatabase;
+it('can create captured email', function (): void {
+    $email = CapturedEmail::create([
+        'subject' => 'Test Subject',
+        'from' => 'sender@example.com',
+        'to' => ['recipient@example.com'],
+        'html_body' => '<p>Test body</p>',
+        'text_body' => 'Test body',
+    ]);
 
-    public function test_it_can_create_captured_email(): void
-    {
-        $email = CapturedEmail::create([
-            'subject' => 'Test Subject',
-            'from' => 'sender@example.com',
-            'to' => ['recipient@example.com'],
-            'html_body' => '<p>Test body</p>',
-            'text_body' => 'Test body',
-        ]);
+    expect($email->uuid)->not->toBeNull();
+    expect($email->subject)->toBe('Test Subject');
+    expect($email->to)->toBe(['recipient@example.com']);
+});
 
-        $this->assertNotNull($email->uuid);
-        $this->assertEquals('Test Subject', $email->subject);
-        $this->assertEquals(['recipient@example.com'], $email->to);
-    }
+it('generates uuid on creation', function (): void {
+    $email = CapturedEmail::create([
+        'subject' => 'Test',
+        'from' => 'test@example.com',
+        'to' => ['to@example.com'],
+    ]);
 
-    public function test_it_generates_uuid_on_creation(): void
-    {
-        $email = CapturedEmail::create([
-            'subject' => 'Test',
-            'from' => 'test@example.com',
-            'to' => ['to@example.com'],
-        ]);
+    expect($email->uuid)->not->toBeNull();
+    expect(strlen((string) $email->uuid))->toBe(36);
+});
 
-        $this->assertNotNull($email->uuid);
-        $this->assertEquals(36, strlen($email->uuid));
-    }
+it('filters by subject using search scope', function (): void {
+    CapturedEmail::create([
+        'subject' => 'Welcome Email',
+        'from' => 'test@example.com',
+        'to' => ['user@example.com'],
+    ]);
 
-    public function test_search_scope_filters_by_subject(): void
-    {
-        CapturedEmail::create([
-            'subject' => 'Welcome Email',
-            'from' => 'test@example.com',
-            'to' => ['user@example.com'],
-        ]);
+    CapturedEmail::create([
+        'subject' => 'Password Reset',
+        'from' => 'test@example.com',
+        'to' => ['user@example.com'],
+    ]);
 
-        CapturedEmail::create([
-            'subject' => 'Password Reset',
-            'from' => 'test@example.com',
-            'to' => ['user@example.com'],
-        ]);
+    $results = CapturedEmail::search('Welcome')->get();
 
-        $results = CapturedEmail::search('Welcome')->get();
+    expect($results)->toHaveCount(1);
+    expect($results->first()->subject)->toBe('Welcome Email');
+});
 
-        $this->assertCount(1, $results);
-        $this->assertEquals('Welcome Email', $results->first()->subject);
-    }
+it('filters by to address using recipient scope', function (): void {
+    CapturedEmail::create([
+        'subject' => 'Test 1',
+        'from' => 'test@example.com',
+        'to' => ['john@example.com'],
+    ]);
 
-    public function test_recipient_scope_filters_by_to_address(): void
-    {
-        CapturedEmail::create([
-            'subject' => 'Test 1',
-            'from' => 'test@example.com',
-            'to' => ['john@example.com'],
-        ]);
+    CapturedEmail::create([
+        'subject' => 'Test 2',
+        'from' => 'test@example.com',
+        'to' => ['jane@example.com'],
+    ]);
 
-        CapturedEmail::create([
-            'subject' => 'Test 2',
-            'from' => 'test@example.com',
-            'to' => ['jane@example.com'],
-        ]);
+    $results = CapturedEmail::recipient('john@example.com')->get();
 
-        $results = CapturedEmail::recipient('john@example.com')->get();
-
-        $this->assertCount(1, $results);
-        $this->assertEquals('Test 1', $results->first()->subject);
-    }
-}
+    expect($results)->toHaveCount(1);
+    expect($results->first()->subject)->toBe('Test 1');
+});

@@ -2,9 +2,9 @@
 
 namespace Ghijk\EmailPreview\Models;
 
-use Illuminate\Support\Str;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class CapturedEmail extends Model
 {
@@ -45,7 +45,7 @@ class CapturedEmail extends Model
     {
         parent::boot();
 
-        static::creating(function ($model) {
+        static::creating(function ($model): void {
             if (! $model->uuid) {
                 $model->uuid = (string) Str::uuid();
             }
@@ -54,7 +54,7 @@ class CapturedEmail extends Model
 
     public function scopeRecipient($query, string $email)
     {
-        return $query->where(function ($q) use ($email) {
+        return $query->where(function ($q) use ($email): void {
             $q->whereJsonContains('to', $email)
                 ->orWhereJsonContains('cc', $email)
                 ->orWhereJsonContains('bcc', $email);
@@ -85,7 +85,7 @@ class CapturedEmail extends Model
             return $query;
         }
 
-        return $query->where(function ($q) use ($term) {
+        return $query->where(function ($q) use ($term): void {
             $q->where('subject', 'like', "%{$term}%")
                 ->orWhere('from', 'like', "%{$term}%")
                 ->orWhere('mailable_class', 'like', "%{$term}%")
