@@ -41,6 +41,7 @@ class CapturedEmail extends Model
         $this->table = config('email-preview.table', 'captured_emails');
     }
 
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

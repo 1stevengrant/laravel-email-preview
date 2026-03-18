@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 
 class EmailPreviewServiceProvider extends ServiceProvider
 {
+    #[\Override]
     public function register(): void
     {
         $this->mergeConfigFrom(
@@ -59,7 +60,7 @@ class EmailPreviewServiceProvider extends ServiceProvider
     protected function registerMailTransport(): void
     {
         $this->app->afterResolving('mail.manager', function (MailManager $manager): void {
-            $manager->extend('database', fn (): \Ghijk\EmailPreview\Mail\Transport\DatabaseTransport => new DatabaseTransport);
+            $manager->extend('database', fn (): DatabaseTransport => new DatabaseTransport);
         });
     }
 }
