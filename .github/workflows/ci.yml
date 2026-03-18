@@ -16,7 +16,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.2'
+          php-version: '8.3'
           coverage: none
 
       - name: Install dependencies
@@ -35,18 +35,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php: '8.2'
-            laravel: '11.*'
-            testbench: '9.*'
-          - php: '8.3'
-            laravel: '11.*'
-            testbench: '9.*'
           - php: '8.3'
             laravel: '12.*'
             testbench: '10.*'
           - php: '8.4'
             laravel: '12.*'
             testbench: '10.*'
+          - php: '8.4'
+            laravel: '13.*'
+            testbench: '11.*'
 
     steps:
       - uses: actions/checkout@v4
